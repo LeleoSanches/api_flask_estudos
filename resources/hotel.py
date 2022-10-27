@@ -1,29 +1,6 @@
 from flask_restful import Resource, reqparse
 from models.hotel import HotelModel
-
-hoteis = [
-    {
-        'hotel_id':'alpha',
-        'nome':'Alpha Hotel',
-        'estrelas':4.3,
-        'diaria':420.34,
-        'cidade':'Rio de Janeiro'
-    },
-    {
-        'hotel_id':'bravo',
-        'nome':'Bravo Hotel',
-        'estrelas':2.3,
-        'diaria':90.45,
-        'cidade':'Umuarama'
-    },
-    {
-        'hotel_id':'beta',
-        'nome':'Beta Hotel',
-        'estrelas':5,
-        'diaria':1000.43,
-        'cidade':'Londrina'
-    },
-]
+from flask_jwt_extended import jwt_required
 
 
     
@@ -46,6 +23,7 @@ class Hotel(Resource):
             return hotel.json()
         return {'message': 'Hotel não encontrado'}, 404
 
+    @jwt_required()
     def post(self,hotel_id):
         if HotelModel.find_hotel(hotel_id):
             return {"message":"Hotel id '{}' já existe.".format(hotel_id)}, 400
@@ -58,6 +36,7 @@ class Hotel(Resource):
             return {'message':'Erro em salvar hotel'}, 500
         return hotel.json()
 
+    @jwt_required()
     def put(self,hotel_id):
 
         dados = Hotel.argumentos.parse_args()
@@ -74,6 +53,7 @@ class Hotel(Resource):
             return {'message':'Erro em salvar hotel'}, 500
         return hotel.json(), 201
 
+    @jwt_required()
     def delete(self,hotel_id):
         hotel = HotelModel.find_hotel(hotel_id)
         if hotel:
